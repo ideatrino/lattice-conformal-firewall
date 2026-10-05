@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lattice-conformal-firewall"
+version = "3.1.0"
+description = "An original, mathematically grounded firewall: a volumetric cross-flow layer, a provably consistent policy lattice, Bayesian + sequential verdicts with exact attribution, an information-theoretic anomaly gate, and conformal false-positive guarantees (marginal, adaptive-under-drift, and per-group Mondrian)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "ideatrino" }]
+keywords = ["firewall", "network-security", "conformal-prediction",
+            "anomaly-detection", "formal-methods"]
+dependencies = ["numpy>=1.21"]
+
+[project.optional-dependencies]
+live = ["netfilterqueue>=1.0"]   # inline NFQUEUE mode on Linux (requires root)
+
+[project.scripts]
+lcf = "lcf.cli:main"
+
+[tool.setuptools]
+packages = ["lcf"]

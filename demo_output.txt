@@ -1,0 +1,51 @@
+LATTICE-CONFORMAL FIREWALL - demonstration
+
+========================================================================
+A.  Rule lattice - provable policy analysis (Layer 2)
+========================================================================
+raw policy: 6 rules
+  [shadowing     ] 'block-host-443' is fully covered by earlier 'allow-web-subnet' with opposite action; it can never fire.
+  [generalization] 'block-ssh-all' is more general than earlier 'allow-ssh-admin' and disagrees; order-dependent.
+
+canonical normal form: 3 rules (dead/redundant dropped, adjacent merged, policy-equivalent)
+  ALLOW   Box(src_ip=*, dst_ip=[167772160,167772671], src_port=*, dst_port=[443,443], proto=*)
+  ALLOW   Box(src_ip=[3232235776,3232236031], dst_ip=*, src_port=*, dst_port=[22,22], proto=*)
+  DENY    Box(src_ip=*, dst_ip=*, src_port=*, dst_port=[22,22], proto=*)
+
+========================================================================
+B.  Conformal guarantee - empirical FPR <= alpha (Layer 5)
+========================================================================
+  alpha | target floor(a(n+1))/(n+1) |  mean emp. FPR | holds?
+------------------------------------------------------------------------
+  0.200 |                    0.19990 |        0.19729 |   yes
+  0.100 |                    0.09995 |        0.09962 |   yes
+  0.050 |                    0.04998 |        0.05088 |   yes
+  0.020 |                    0.01999 |        0.01936 |   yes
+  0.010 |                    0.01000 |        0.01007 |   yes
+------------------------------------------------------------------------
+guarantee held: empirical FPR tracks the theoretical target <= alpha
+
+========================================================================
+C.  Full firewall - detection rate & false-positive rate
+========================================================================
+detection rate, loud (encrypted exfil) : 100.00%
+detection rate, stealthy (benign-looking payload) : 100.00%
+false-positive rate on benign          :  1.70%  (conformal alpha=1% + KL gate eps=1%)
+
+block attribution shows the layers are complementary:
+  loud     -> {'anomaly': 1500}
+  stealthy -> {'conformal': 1500}
+
+example verdicts:
+  loud     BLOCK via anomaly   | post=1.000 kl=1.011 p=0.0005
+  stealth  BLOCK via conformal | post=1.000 kl=0.003 p=0.0005
+  benign   ALLOW via conformal | post=0.000 kl=0.008 p=0.4053
+  benign   ALLOW via conformal | post=0.000 kl=0.005 p=0.6337
+
+========================================================================
+D.  Sequential test - decide a stream early (Layer 3, SPRT)
+========================================================================
+benign    : last decision = benign    | avg packets to decide =   7.0
+malicious : last decision = malicious | avg packets to decide =   7.3
+
+done.

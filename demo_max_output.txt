@@ -1,0 +1,48 @@
+LATTICE-CONFORMAL FIREWALL v3 - maximal layer demonstration
+
+========================================================================
+G.  Volumetric layer - DoS flood & port scan (cross-flow)
+========================================================================
+calibrated entropy floors: dst>=8.97 src>=8.97 bits
+  ALERT flood -> dst-IP entropy 0.00 < floor 8.97
+  ALERT scan  -> src-IP entropy 0.00 < floor 8.97
+
+========================================================================
+H.  Mondrian conformal - per-group guarantee (alpha = 0.05)
+========================================================================
+              group A    group B
+  marginal    0.001      0.098   <- group B over-blocked ~2x
+  mondrian    0.046      0.047   <- both held at target
+
+========================================================================
+I.  Drift detection - Page-Hinkley (recalibration trigger)
+========================================================================
+  false alarms on 8000 stationary samples : 0
+  shift injected at t=1500 -> detected at t=1536 (delay 36)
+
+========================================================================
+J.  Explainability - why a flow was blocked
+========================================================================
+  loud      BLOCK via anomaly: payload divergence 0.969 > 0.017; driven by payload_entropy (+6045.52), mean_iat (+288.26), std_iat (+282.12)
+  stealthy  BLOCK via conformal: conformal p=0.0005 < alpha=0.01; driven by mean_pkt_size (+465.94), payload_entropy (-135.53), pkt_rate (-25.89)
+
+========================================================================
+K.  Evaluation - AUC / ROC
+========================================================================
+  clean traffic  : AUC = 1.0000
+  weak attacker  : AUC = 0.9991  (overlapping distributions)
+
+========================================================================
+L.  Pluggable scorer - GMM beats single Gaussian, guarantee transfers
+========================================================================
+benign feature is bimodal (~100 and ~900); novel attack sits at ~500
+
+  model            | AUC (novelty) | conformal FPR @ alpha=0.05
+  --------------------------------------------------------
+  single Gaussian  |         0.313 | 0.046
+  GMM (K=2)        |         1.000 | 0.044
+
+  the single Gaussian scores below 0.5 (the valley looks 'normal' to it);
+  the GMM captures both modes - and the alpha guarantee holds for both.
+
+done.

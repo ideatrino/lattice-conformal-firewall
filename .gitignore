@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+*.whl
+.venv/
+venv/
+.env
+
+# Packaging artifact
+lattice_conformal_firewall.zip
+
+# Generated at runtime by the demos / CLI
+*.pcap
+model.json
+model*.json
+roc.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

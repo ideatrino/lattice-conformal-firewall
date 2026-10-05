@@ -1,0 +1,28 @@
+LATTICE-CONFORMAL FIREWALL v2 - ingestion & drift demonstration
+
+========================================================================
+E.  Real ingestion: pcap -> flows -> verdicts (save/reload model)
+========================================================================
+captured 1280 packets / 20 benign, 8 loud, 8 stealthy flows
+model trained, saved (37281 bytes), reloaded
+
+replayed 36 flows parsed from raw packets: 17 blocked, 19 allowed
+block attribution: {'anomaly': 8, 'conformal': 9}
+
+sample (parsed straight from the wire format):
+  ALLOW [conformal] 10.0.60.122:64135 -> 93.184.65.103:22 proto=6 | within tolerance (p=0.5823 >= alpha)
+  ALLOW [conformal] 93.184.162.19:8080 -> 10.0.239.13:48484 proto=6 | within tolerance (p=0.5923 >= alpha)
+  ALLOW [conformal] 10.0.116.17:13510 -> 93.184.109.11:443 proto=6 | within tolerance (p=0.0766 >= alpha)
+  BLOCK [anomaly  ] 10.0.12.62:10781 -> 93.184.122.45:53 proto=6 | payload divergence 1.043 > 0.015
+
+========================================================================
+F.  Drift robustness: adaptive vs static conformal (Layer 5+)
+========================================================================
+benign traffic, target false-positive rate alpha = 0.05
+  before shift : static 0.057   adaptive 0.050
+  after  shift : static 0.374   adaptive 0.051   (transient)
+  long-run avg : static 0.216   adaptive 0.050
+  ACI guarantee |avg - alpha| <= (alpha+gamma)/(gamma*T) = 0.0004  ->  measured 0.0003
+static conformal drifts with the attacker; ACI returns to target.
+
+done.
